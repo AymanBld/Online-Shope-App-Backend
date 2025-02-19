@@ -6,19 +6,19 @@ class MyUser(AbstractUser):
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    image_url = models.ImageField(upload_to='images/category/')
+    image_url = models.ImageField(upload_to='images/category/', blank=True, default='/images/default.jpg')
 
     def __str__(self):
         return self.name
     
 class Product(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=1000, default='No description available')
+    description = models.CharField(max_length=1000, blank=True, default='No description available')
     price = models.FloatField()
-    discount = models.FloatField()
-    image_url = models.ImageField(upload_to='images/products/')
+    discount = models.IntegerField(blank=True, default=0)
+    image_url = models.ImageField(upload_to='images/products/', blank=True, default='/images/default.jpg')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    favorited_by = models.ManyToManyField(MyUser, related_name='favorite_products')
+    favorited_by = models.ManyToManyField(MyUser, related_name='favorite_products', blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -71,7 +71,6 @@ class Coupon(models.Model):
     name = models.CharField(max_length=100)
     discount = models.FloatField()
     quantity = models.IntegerField()
-    
     dateEx = models.DateField()
 
     def __str__(self):
