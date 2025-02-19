@@ -45,7 +45,7 @@ class Orders(models.Model):
     total_price = models.FloatField()
     quantity = models.IntegerField()
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
-    status = models.TextChoices(['pending','delivered','3','4'])
+    status = models.CharField(max_length= 50, choices= [('Pending', 'pending'), ('Delevred', 'delevred'), ('InStock', 'in stock')])
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -66,6 +66,7 @@ class Coupon(models.Model):
     name = models.CharField(max_length=100)
     discount = models.FloatField()
     quantity = models.IntegerField()
+    
     dateEx = models.DateField()
 
     def __str__(self):
