@@ -1,4 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+class MyUser(AbstractUser):
+    phone = models.IntegerField(null=True, blank=True)
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -19,7 +23,7 @@ class Products(models.Model):
         return self.name
 
 class Delevry(models.Model):
-    # i will modify this model like a user model
+    # !!!!!!!i will modify this model like a user model
 
     name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -34,13 +38,13 @@ class Address(models.Model):
     street = models.CharField(max_length=100)
     lang = models.FloatField()
     lat = models.FloatField()
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name, 'of', self.user
     
 class Orders(models.Model):
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     delivery = models.ForeignKey(Delevry, on_delete=models.CASCADE)
     total_price = models.FloatField()
     quantity = models.IntegerField()
