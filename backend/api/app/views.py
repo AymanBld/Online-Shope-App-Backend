@@ -11,3 +11,8 @@ def products_of_category(request, category_id):
     serializer = ProductSerializer(products, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def products_of_deal(request):
+    products = Product.objects.order_by('-discount')
+    serializer = ProductSerializer(products, many=True)
+    return Response(serializer.data)
