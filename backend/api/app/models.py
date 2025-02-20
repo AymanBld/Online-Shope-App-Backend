@@ -18,7 +18,7 @@ class Product(models.Model):
     discount = models.IntegerField(blank=True, default=0)
     image_url = models.ImageField(upload_to='images/products/', blank=True, default='/images/default.jpg')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    favorited_by = models.ManyToManyField(MyUser, related_name='favorite_products', blank=True, null=True)
+    favorited_by = models.ManyToManyField(MyUser, related_name='favorite_products', blank=True)
 
     def __str__(self):
         return self.name
@@ -46,23 +46,22 @@ class Address(models.Model):
     
 class Order(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    delivery = models.ForeignKey(Delevry, on_delete=models.CASCADE)
+    delivery = models.ForeignKey(Delevry, on_delete=models.CASCADE, blank=True, null=True)
     total_price = models.FloatField()
     quantity = models.IntegerField()
+    payment_method = models.CharField(max_length=100, choices=[('Cash', 'cash'), ('Credit', 'credit')])
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
-    status = models.CharField(max_length= 50, choices= [('Pending', 'pending'), ('Delevred', 'delevred'), ('InStock', 'in stock')])
+    status = models.CharField(max_length= 50, choices= [('Pending', 'pending'), ('Delevred', 'delevred'), ('InStock', 'in stock')], default='Pending')
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.user
     
-
-
 class Cart(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    total_price = models.FloatField()
-    date = models.DateTimeField(auto_now_add=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.product.name
