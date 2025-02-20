@@ -8,18 +8,18 @@ from .serializer import ProductSerializer
 @api_view(['GET'])
 def products_of_category(request, category_id):
     products = Product.objects.filter(category=category_id).order_by('favorited_by')
-    serializer = ProductSerializer(products, many=True)
+    serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(['GET'])
 def products_of_deal(request):
     products = Product.objects.order_by('-discount')
-    serializer = ProductSerializer(products, many=True)
+    serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(['GET'])
 def search_view(request):
     keyword = request.GET.get('keyword')
     products = Product.objects.filter(Q(name__icontains=keyword) | Q(description__icontains=keyword))
-    serializer = ProductSerializer(products, many=True)
+    serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
