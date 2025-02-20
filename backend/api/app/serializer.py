@@ -11,6 +11,4 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_is_favorite(self, obj):
         user = self.context.get('request').user
-        if user.is_authenticated:
-            return user in obj.favorited_by.all()
-        return False
+        return user in obj.favorited_by.all()
