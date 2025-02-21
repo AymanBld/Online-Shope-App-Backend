@@ -63,6 +63,9 @@ class Cart(models.Model):
     quantity = models.IntegerField()
     order = models.ForeignKey(Order, on_delete=models.CASCADE, blank=True, null=True)
 
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['user', 'product'], name='unique_user_product_cart')]
+
     def __str__(self):
         return self.product.name
 
