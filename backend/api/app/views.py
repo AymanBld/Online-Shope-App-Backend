@@ -1,14 +1,16 @@
 from django.db.models import Q
-from rest_framework import mixins, generics
+from rest_framework import mixins, generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from .models import Product, Cart
-from .serializer import ProductSerializer
+from .serializer import ProductSerializer, CartSerializer
+
 
 @api_view(['GET'])
 def products_of_category(request, category_id):
     products = Product.objects.filter(category=category_id).order_by('favorited_by')
+    
     serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
@@ -48,7 +50,7 @@ def add_delete_favorite_product(request, product_id):
 
 # ---------------------- \Cart ------------------------
 
-api_view(['POST'])
+@api_view(['POST'])
 def add_item_to_cart(request):
     product_id = request.data.get('product_id')
     quantity = request.data.get('quantity')
