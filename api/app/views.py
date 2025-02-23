@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
 from .models import Product, Cart
-from .serializer import ProductSerializer, CartSerializer
+from .serializer import *
 
 
 @api_view(['GET'])
@@ -52,23 +52,15 @@ def add_delete_favorite_product(request, product_id):
 
 # ---------------------- \Cart ------------------------
 
-# @api_view(['POST'])
-# def add_item_to_cart(request):
-#     product_id = request.data.get('product_id')
-#     quantity = request.data.get('quantity')
-
-#     user = request.user
-#     product = Product.objects.get(id=product_id)
-#     cart_item, created = Cart.objects.get_or_create(user=user, product=product, defaults={'quantity': quantity})
-    
-#     if not created:
-#         cart_item.quantity += quantity
-#         cart_item.save()
-#     return Response({'message': 'Product added to cart'})
-
-
-class AddiItemToCart(generics.GenericAPIView):
+class ListCart(generics.ListAPIView):
     serializer_class = CartSerializer
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Cart.objects.filter(user=user)
+        return queryset
+
+class AddItemToCart(generics.GenericAPIView):
+    serializer_class = CartInputSerializer
     def post(self, request, *arg, **kwarg):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -83,6 +75,3 @@ class AddiItemToCart(generics.GenericAPIView):
             cart_item.save()
         return Response(serializer.data)
             
-
-
-
