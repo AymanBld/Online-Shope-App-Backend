@@ -10,4 +10,5 @@ urlpatterns = [
 
     path('cart/', views.ListCart.as_view()),
     path('cart/add/', views.AddItemToCart.as_view()),
+    path('cart/coupon/', views.check_coupon),
 ]

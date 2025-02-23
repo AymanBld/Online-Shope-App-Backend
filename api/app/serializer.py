@@ -1,4 +1,4 @@
-from .models import Product, Category, Cart
+from .models import Product, Category, Cart, Coupon
 from rest_framework import serializers
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -28,3 +28,8 @@ class CartSerializer(serializers.ModelSerializer):
 class CartInputSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
     quantity = serializers.IntegerField()
+
+class CouponSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Coupon
+        fields = '__all__'

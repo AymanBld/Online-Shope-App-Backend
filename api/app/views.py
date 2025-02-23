@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db.models import Q
 from rest_framework import mixins, generics, status
 from rest_framework.response import Response
@@ -5,7 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
-from .models import Product, Cart
+from .models import Product, Cart, Coupon
 from .serializer import *
 
 
@@ -74,4 +75,9 @@ class AddItemToCart(generics.GenericAPIView):
             cart_item.quantity += quantity
             cart_item.save()
         return Response(serializer.data)
-            
+
+@api_view(['GET'])
+def check_coupon(request):
+    name_input = request.GET.get('coupon')
+    coupon = get_object_or_404(Coupon, name=name_input, quantity__gt=0, dateEx__gte=timezone.now().date())
+    return Response({'discount': coupon.discount})
