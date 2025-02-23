@@ -67,7 +67,7 @@ class Cart(models.Model):
         constraints = [models.UniqueConstraint(fields=['user', 'product'], name='unique_user_product_cart')]
 
     def __str__(self):
-        return self.product.name
+        return f'{self.product.name} to {self.user.username}'
 
 class Coupon(models.Model):
     name = models.CharField(max_length=100)

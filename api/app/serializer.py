@@ -18,9 +18,6 @@ class ProductSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         return user in obj.favorited_by.all()
     
-class CartSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()
-
-    class Meta:
-        model = Cart
-        fields = ['id', 'user', 'product', 'quantity']
+class CartSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField()
+    quantity = serializers.IntegerField()

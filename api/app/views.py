@@ -2,6 +2,8 @@ from django.db.models import Q
 from rest_framework import mixins, generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 
 from .models import Product, Cart
 from .serializer import ProductSerializer, CartSerializer
@@ -50,16 +52,37 @@ def add_delete_favorite_product(request, product_id):
 
 # ---------------------- \Cart ------------------------
 
-@api_view(['POST'])
-def add_item_to_cart(request):
-    product_id = request.data.get('product_id')
-    quantity = request.data.get('quantity')
+# @api_view(['POST'])
+# def add_item_to_cart(request):
+#     product_id = request.data.get('product_id')
+#     quantity = request.data.get('quantity')
 
-    user = request.user
-    product = Product.objects.get(id=product_id)
-    cart_item, created = Cart.objects.get_or_create(user=user, product=product, defaults={'quantity': quantity})
+#     user = request.user
+#     product = Product.objects.get(id=product_id)
+#     cart_item, created = Cart.objects.get_or_create(user=user, product=product, defaults={'quantity': quantity})
     
-    if not created:
-        cart_item.quantity += quantity
-        cart_item.save()
-    return Response({'message': 'Product added to cart'})
+#     if not created:
+#         cart_item.quantity += quantity
+#         cart_item.save()
+#     return Response({'message': 'Product added to cart'})
+
+
+class AddiItemToCart(generics.GenericAPIView):
+    serializer_class = CartSerializer
+    def post(self, request, *arg, **kwarg):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        product_id = serializer.validated_data['product_id']
+        quantity = serializer.validated_data['quantity']
+
+        user = request.user
+        product = get_object_or_404(Product, id=product_id)
+        cart_item, created = Cart.objects.get_or_create(user=user, product=product, defaults={'quantity': quantity})
+        if not created:
+            cart_item.quantity += quantity
+            cart_item.save()
+        return Response(serializer.data)
+            
+
+
+
