@@ -4,6 +4,9 @@ from django.contrib.auth.models import AbstractUser
 class MyUser(AbstractUser):
     phone = models.IntegerField(null=True, blank=True)
 
+    def __str__(self):
+        return self.username
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     image_url = models.ImageField(upload_to='images/category/', blank=True, default='/images/default.jpg')
@@ -31,7 +34,7 @@ class Delevry(models.Model):
     phone = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.user.username
+        return self.name
 
 class Address(models.Model):
     name = models.CharField(max_length=100)
@@ -42,7 +45,7 @@ class Address(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.name} of {self.user}'
+        return f'{self.name} of {self.user.username}'
     
 class Order(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
@@ -55,7 +58,7 @@ class Order(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user
+        return self.user.username
     
 class Cart(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
@@ -64,10 +67,12 @@ class Cart(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=['user', 'product'], name='unique_user_product_cart')]
+        constraints = [models.UniqueConstraint(fields=['user', 'product', 'order'], name='unique_user_product_cart')]
 
     def __str__(self):
-        return f'{self.product.name} to {self.user.username}'
+        if self.order:
+            return f'{self.product.name}, of: {self.user.username}, inOrder: {self.order.date.date()}'
+        return f'{self.product.name}, of: {self.user.username}'
 
 class Coupon(models.Model):
     name = models.CharField(max_length=100)

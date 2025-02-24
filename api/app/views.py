@@ -54,12 +54,6 @@ def add_delete_favorite_product(request, product_id):
 
 # ---------------------------------- \Cart ------------------------------------
 
-class ListCart(generics.ListAPIView):
-    serializer_class = CartSerializer
-    def get_queryset(self):
-        user = self.request.user
-        return Cart.objects.filter(user=user)
-
 class AddItemCart(generics.GenericAPIView):
     serializer_class = CartInputSerializer
     def post(self, request, *arg, **kwarg):
@@ -70,12 +64,18 @@ class AddItemCart(generics.GenericAPIView):
         quantity = serializer.validated_data['quantity']
         user = request.user
 
-        cart_item, created = Cart.objects.get_or_create(user=user, product=product, defaults={'quantity': quantity})
+        cart_item, created = Cart.objects.get_or_create(user=user, product=product, order=None, defaults={'quantity': quantity})
         if not created:
             cart_item.quantity += quantity
             cart_item.save()
             return Response({'message':'cat item incremed'})
         return Response({'message':'cat item created'})
+
+class ListCart(generics.ListAPIView):
+    serializer_class = CartSerializer
+    def get_queryset(self):
+        user = self.request.user
+        return Cart.objects.filter(user=user)
 
 class UpdateRemoveItemCart(generics.DestroyAPIView, mixins.UpdateModelMixin):
     serializer_class = CartInputSerializer
@@ -93,7 +93,7 @@ def check_coupon(request):
     coupon = get_object_or_404(Coupon, name=name_input, quantity__gt=0, dateEx__gte=timezone.now().date())
     return Response({'discount': coupon.discount})
 
-# ---------------------------------- \Orders ------------------------------------
+# ---------------------------------- \Address ------------------------------------
 
 class AddressListCreatView(generics.ListCreateAPIView):
     serializer_class = AdressSerializer
@@ -104,5 +104,3 @@ class AddressRetriveView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Address.objects.all()
     lookup_field = 'id'
 
-
-        
