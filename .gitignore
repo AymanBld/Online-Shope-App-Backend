@@ -1,1 +1,43 @@
+# Byte-compiled / cached
+__pycache__/
+*.py[cod]
+*.swp
+*.swo
+
+
+# Virtual environment
+venv/
+env/
+*.venv
+Pipfile.lock
+
+# Django migrations (optional, but usually kept)
+*/migrations/*
+!*/migrations/__init__.py
+
+# Database (ignore SQLite, but keep migrations)
+db.sqlite3
+db.sqlite3-journal
+
+# Media / Uploaded files
 images/
+media/
+*.log
+logs/
+debug.log
+
+# IDE & System files
+.vscode/
+.idea/
+*.iml
+.DS_Store
+*.bak
+
+
+# Environment variables & secrets
+.env
+*.secret
+config/settings/local.py  # If using a local settings file
+
+# Docker & Deployment (if applicable)
+docker-compose.override.yml

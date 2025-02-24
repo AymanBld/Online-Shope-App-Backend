@@ -12,14 +12,14 @@ from .serializer import *
 # ---------------------------------- \Products ------------------------------------
 
 @api_view(['GET'])
-def products_of_category(request, category_id):
+def list_products_from_category(request, category_id):
     products = Product.objects.filter(category=category_id).order_by('favorited_by')
     
     serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(['GET'])
-def products_of_deal(request):
+def list_deal_products(request):
     products = Product.objects.order_by('-discount')
     serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
@@ -54,7 +54,7 @@ def add_delete_favorite_product(request, product_id):
 
 # ---------------------------------- \Cart ------------------------------------
 
-class AddItemCart(generics.GenericAPIView):
+class AddItemCartView(generics.GenericAPIView):
     serializer_class = CartInputSerializer
     def post(self, request, *arg, **kwarg):
         serializer = self.get_serializer(data=request.data)
@@ -71,7 +71,7 @@ class AddItemCart(generics.GenericAPIView):
             return Response({'message':'cat item incremed'})
         return Response({'message':'cat item created'})
 
-class ListCart(generics.ListAPIView):
+class ListCartView(generics.ListAPIView):
     serializer_class = CartSerializer
     def get_queryset(self):
         user = self.request.user
@@ -88,7 +88,7 @@ class UpdateRemoveItemCart(generics.DestroyAPIView, mixins.UpdateModelMixin):
         return self.destroy(request, *args, **kwargs)
 
 @api_view(['GET'])
-def check_coupon(request):
+def check_coupon_view(request):
     name_input = request.GET.get('coupon')
     coupon = get_object_or_404(Coupon, name=name_input, quantity__gt=0, dateEx__gte=timezone.now().date())
     return Response({'discount': coupon.discount})
@@ -106,7 +106,7 @@ class AddressRetriveView(generics.RetrieveUpdateDestroyAPIView):
 
 # ---------------------------------- \Orders ------------------------------------
 
-class OrdersView(generics.CreateAPIView):
+class CreatOrderView(generics.CreateAPIView):
     serializer_class = OrderSerializer      
     queryset = Order.objects.all()
 
@@ -118,3 +118,10 @@ class OrdersView(generics.CreateAPIView):
         Cart.objects.filter(order__isnull=True, user=user).update(order=order_id)
         return creat_response
         
+class ListAllOrdersView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    queryset = Order.objects.all()
+
+class ListActiveOrdersView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    queryset = Order.objects.filter(status=4)

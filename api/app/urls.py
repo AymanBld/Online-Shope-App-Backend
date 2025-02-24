@@ -2,20 +2,22 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('category/<int:category_id>/', products_of_category),
-    path('deals/', products_of_deal),
+    path('category/<int:category_id>/', list_products_from_category),
+    path('deals/', list_deal_products),
     path('products/', search_view),
     path('favorite/', list_favorite_products),
     path('favorite/<int:product_id>/', add_delete_favorite_product),
 
-    path('cart/', ListCart.as_view()),
-    path('cart/add/', AddItemCart.as_view()),
+    path('cart/', ListCartView.as_view()),
+    path('cart/add/', AddItemCartView.as_view()),
     path('cart/<int:id>/', UpdateRemoveItemCart.as_view()),   # Allowed: DELETE - PATCH 
-    path('cart/coupon/', check_coupon),
+    path('cart/coupon/', check_coupon_view),
 
-    path('order/', OrdersView.as_view()),
-    path('order/<int:id>', OrdersView.as_view()),
+    path('orders/', CreatOrderView.as_view()),
+    path('orders/active', ListActiveOrdersView.as_view()),
+    path('orders/archive/', ListAllOrdersView.as_view()),
+    path('orders/<int:id>/', ),
 
     path('address/', AddressListCreatView.as_view()),
-    path('address/<int:id>', AddressRetriveView.as_view()),
+    path('address/<int:id>/', AddressRetriveView.as_view()),
 ]
