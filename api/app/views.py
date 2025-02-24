@@ -104,3 +104,17 @@ class AddressRetriveView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Address.objects.all()
     lookup_field = 'id'
 
+# ---------------------------------- \Orders ------------------------------------
+
+class OrdersView(generics.CreateAPIView):
+    serializer_class = OrderSerializer      
+    queryset = Order.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        creat_response=self.create(request, *args, **kwargs)
+        order_id = creat_response.data['id']
+
+        user = request.user
+        Cart.objects.filter(order__isnull=True, user=user).update(order=order_id)
+        return creat_response
+        

@@ -13,6 +13,9 @@ urlpatterns = [
     path('cart/<int:id>/', UpdateRemoveItemCart.as_view()),   # Allowed: DELETE - PATCH 
     path('cart/coupon/', check_coupon),
 
+    path('order/', OrdersView.as_view()),
+    path('order/<int:id>', OrdersView.as_view()),
+
     path('address/', AddressListCreatView.as_view()),
     path('address/<int:id>', AddressRetriveView.as_view()),
 ]
