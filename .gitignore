@@ -1,15 +1,16 @@
-# Byte-compiled / cached
 __pycache__/
+*/__pycache__/
+
 *.py[cod]
 *.swp
 *.swo
+pipfile
 
 
 # Virtual environment
 venv/
 env/
 *.venv
-Pipfile.lock
 
 # Django migrations (optional, but usually kept)
 */migrations/*
