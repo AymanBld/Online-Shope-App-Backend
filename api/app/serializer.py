@@ -1,4 +1,4 @@
-from .models import Product, Category, Cart, Coupon
+from .models import *
 from rest_framework import serializers
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -9,7 +9,6 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     is_favorite = serializers.SerializerMethodField()
     category = CategorySerializer()
-
     class Meta:
         model = Product
         fields = ['id', 'name', 'description', 'image_url', 'price', 'discount', 'is_favorite', 'category']  
@@ -18,12 +17,13 @@ class ProductSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         return user in obj.favorited_by.all()
     
+
 class CartSerializer(serializers.ModelSerializer):
     product = ProductSerializer()
-
     class Meta:
         model = Cart
-        fields = ['id', 'product', 'quantity']
+        # fields = ['id', 'product', 'quantity']
+        fields = '__all__'
 
 class CartInputSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,4 +33,16 @@ class CartInputSerializer(serializers.ModelSerializer):
 class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
+        fields = '__all__'
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+
+class AdressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
         fields = '__all__'

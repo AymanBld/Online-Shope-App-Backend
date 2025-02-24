@@ -10,6 +10,9 @@ urlpatterns = [
 
     path('cart/', ListCart.as_view()),
     path('cart/add/', AddItemCart.as_view()),
-    path('cart/<int:id>/', UpdateRemoveItemCart.as_view()),
+    path('cart/<int:id>/', UpdateRemoveItemCart.as_view()),   # Allowed: DELETE - PATCH 
     path('cart/coupon/', check_coupon),
+
+    path('address/', AddressListCreatView.as_view()),
+    path('address/<int:id>', AddressRetriveView.as_view()),
 ]

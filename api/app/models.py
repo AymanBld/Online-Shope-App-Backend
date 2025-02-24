@@ -42,7 +42,7 @@ class Address(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name, 'of', self.user
+        return f'{self.name} of {self.user}'
     
 class Order(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)

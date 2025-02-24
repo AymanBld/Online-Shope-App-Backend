@@ -6,9 +6,10 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
-from .models import Product, Cart, Coupon
+from .models import *
 from .serializer import *
 
+# ---------------------------------- \Products ------------------------------------
 
 @api_view(['GET'])
 def products_of_category(request, category_id):
@@ -30,7 +31,7 @@ def search_view(request):
     serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
-# ---------------- \Favorite Products ------------
+# ---------------------------------- \Favorite ------------------------------------
 
 @api_view(['GET'])
 def list_favorite_products(request):
@@ -51,28 +52,27 @@ def add_delete_favorite_product(request, product_id):
         product.favorited_by.remove(user)
         return Response({'message': 'Product removed from favorites'})
 
-# ---------------------- \Cart ------------------------
+# ---------------------------------- \Cart ------------------------------------
 
 class ListCart(generics.ListAPIView):
     serializer_class = CartSerializer
     def get_queryset(self):
         user = self.request.user
         return Cart.objects.filter(user=user)
-        
 
 class AddItemCart(generics.GenericAPIView):
     serializer_class = CartInputSerializer
     def post(self, request, *arg, **kwarg):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
         product = serializer.validated_data['product']
         quantity = serializer.validated_data['quantity']
-
         user = request.user
+
         cart_item, created = Cart.objects.get_or_create(user=user, product=product, defaults={'quantity': quantity})
         if not created:
             cart_item.quantity += quantity
-            
             cart_item.save()
             return Response({'message':'cat item incremed'})
         return Response({'message':'cat item created'})
@@ -87,9 +87,22 @@ class UpdateRemoveItemCart(generics.DestroyAPIView, mixins.UpdateModelMixin):
             return self.partial_update(request, *args, **kwargs)
         return self.destroy(request, *args, **kwargs)
 
-
 @api_view(['GET'])
 def check_coupon(request):
     name_input = request.GET.get('coupon')
     coupon = get_object_or_404(Coupon, name=name_input, quantity__gt=0, dateEx__gte=timezone.now().date())
     return Response({'discount': coupon.discount})
+
+# ---------------------------------- \Orders ------------------------------------
+
+class AddressListCreatView(generics.ListCreateAPIView):
+    serializer_class = AdressSerializer
+    queryset = Address.objects.all()
+
+class AddressRetriveView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = AdressSerializer
+    queryset = Address.objects.all()
+    lookup_field = 'id'
+
+
+        
