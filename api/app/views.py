@@ -77,21 +77,15 @@ class AddItemCart(generics.GenericAPIView):
             return Response({'message':'cat item incremed'})
         return Response({'message':'cat item created'})
 
-class UpdateRemovwItemCart(generics.DestroyAPIView, mixins.UpdateModelMixin):
+class UpdateRemoveItemCart(generics.DestroyAPIView, mixins.UpdateModelMixin):
     serializer_class = CartInputSerializer
     queryset = Cart.objects.all()
     lookup_field = 'id'
 
     def patch(self, request, *args, **kwargs):
-        product = self.get_object()
-        serializer = self.get_serializer(product, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        quantity = serializer.validated_data['quantity']
-        if quantity > 0:
-            serializer.save()
-            return Response(serializer.data)
-        product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if request.data.get('quantity') > 0:
+            return self.partial_update(request, *args, **kwargs)
+        return self.destroy(request, *args, **kwargs)
 
 
 @api_view(['GET'])

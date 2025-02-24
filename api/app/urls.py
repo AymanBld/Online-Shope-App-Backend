@@ -10,6 +10,6 @@ urlpatterns = [
 
     path('cart/', ListCart.as_view()),
     path('cart/add/', AddItemCart.as_view()),
-    path('cart/<int:id>/', UpdateRemovwItemCart.as_view()),
+    path('cart/<int:id>/', UpdateRemoveItemCart.as_view()),
     path('cart/coupon/', check_coupon),
 ]
