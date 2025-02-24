@@ -25,9 +25,12 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ['id', 'product', 'quantity']
 
-class CartInputSerializer(serializers.Serializer):
-    product_id = serializers.IntegerField()
-    quantity = serializers.IntegerField()
+class CartInputSerializer(serializers.ModelSerializer):
+    # product_id = serializers.IntegerField()
+    # quantity = serializers.IntegerField()
+    class Meta:
+        model = Cart
+        fields = ['product', 'quantity']
 
 class CouponSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django.db.models import Q
-from rest_framework import mixins, generics, status
+from rest_framework import mixins, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -65,16 +65,19 @@ class AddItemToCart(generics.GenericAPIView):
     def post(self, request, *arg, **kwarg):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        product_id = serializer.validated_data['product_id']
+        product = serializer.validated_data['product']
         quantity = serializer.validated_data['quantity']
 
         user = request.user
-        product = get_object_or_404(Product, id=product_id)
         cart_item, created = Cart.objects.get_or_create(user=user, product=product, defaults={'quantity': quantity})
         if not created:
             cart_item.quantity += quantity
+            
             cart_item.save()
-        return Response(serializer.data)
+            return Response({'message':'cat item incremed'})
+        return Response({'message':'cat item created'})
+
+
 
 @api_view(['GET'])
 def check_coupon(request):
