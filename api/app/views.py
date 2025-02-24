@@ -124,4 +124,9 @@ class ListAllOrdersView(generics.ListAPIView):
 
 class ListActiveOrdersView(generics.ListAPIView):
     serializer_class = OrderSerializer
-    queryset = Order.objects.filter(status=4)
+    queryset = Order.objects.filter(status__lt=4)
+
+class RetriveDeleteUpdateOrder(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = OrderSerializer
+    queryset = Order.objects.all()
+    lookup_field = 'id'

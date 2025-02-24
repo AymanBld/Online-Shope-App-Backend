@@ -48,17 +48,18 @@ class Address(models.Model):
         return f'{self.name} of {self.user.username}'
     
 class Order(models.Model):
+    STATUS_CHOICES= [(1, 'Pending'), (2, 'Accepted'), (3, 'Processing'), (4, 'Delivered'), (5, 'Canceled')]
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     delivery = models.ForeignKey(Delevry, on_delete=models.CASCADE, blank=True, null=True)
     total_price = models.FloatField()
     quantity = models.IntegerField()
     payment_method = models.CharField(max_length=100, choices=[('Cash', 'cash'), ('Credit', 'credit')])
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
-    status = models.CharField(max_length= 50, choices= [('Pending', 'pending'), ('Delevred', 'delevred'), ('InStock', 'in stock')], default='Pending')
+    status = models.IntegerField(max_length= 50, choices=STATUS_CHOICES, default=1)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.username
+        return f'{self.user.username} at {self.date.date()}'
     
 class Cart(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
