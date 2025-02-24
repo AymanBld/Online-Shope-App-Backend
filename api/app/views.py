@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django.db.models import Q
-from rest_framework import mixins, generics
+from rest_framework import mixins, generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -57,10 +57,10 @@ class ListCart(generics.ListAPIView):
     serializer_class = CartSerializer
     def get_queryset(self):
         user = self.request.user
-        queryset = Cart.objects.filter(user=user)
-        return queryset
+        return Cart.objects.filter(user=user)
+        
 
-class AddItemToCart(generics.GenericAPIView):
+class AddItemCart(generics.GenericAPIView):
     serializer_class = CartInputSerializer
     def post(self, request, *arg, **kwarg):
         serializer = self.get_serializer(data=request.data)
@@ -77,6 +77,21 @@ class AddItemToCart(generics.GenericAPIView):
             return Response({'message':'cat item incremed'})
         return Response({'message':'cat item created'})
 
+class UpdateRemovwItemCart(generics.DestroyAPIView, mixins.UpdateModelMixin):
+    serializer_class = CartInputSerializer
+    queryset = Cart.objects.all()
+    lookup_field = 'id'
+
+    def patch(self, request, *args, **kwargs):
+        product = self.get_object()
+        serializer = self.get_serializer(product, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        quantity = serializer.validated_data['quantity']
+        if quantity > 0:
+            serializer.save()
+            return Response(serializer.data)
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])
