@@ -20,7 +20,9 @@ class ProductWithCategorySerializer(serializers.ModelSerializer):
 
     def get_is_favorite(self, obj):
         user = self.context.get('request').user
-        return user in obj.favorited_by.all()
+        if user :
+            return user in obj.favorited_by.all()
+        return False
     
 
 class CartSerializer(serializers.ModelSerializer):

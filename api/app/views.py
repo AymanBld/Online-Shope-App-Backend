@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.db.models import Q
 from rest_framework import mixins, generics, status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
@@ -34,9 +34,9 @@ class CategoryRetriveView(generics.RetrieveUpdateDestroyAPIView):
 # ---------------------------------- \Products ------------------------------------
 
 @api_view(['GET'])
-def list_products_from_category(request, category_id):
-    products = Product.objects.filter(category=category_id).order_by('favorited_by')
-    
+@permission_classes([])
+def list_products_by_category(request, category_id):
+    products = Product.objects.filter(category=category_id)
     serializer = ProductWithCategorySerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
@@ -47,7 +47,7 @@ def list_deal_products(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def search_view(request):
+def search_products_view(request):
     keyword = request.GET.get('keyword')
     products = Product.objects.filter(Q(name__icontains=keyword) | Q(description__icontains=keyword))
     serializer = ProductWithCategorySerializer(products, many=True, context={'request': request})
