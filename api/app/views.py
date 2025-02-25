@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from .models import *
 from .serializer import *
 
-# ---------------------------------- \Address ------------------------------------
+# ---------------------------------- \Products ------------------------------------
 
 class ProductsListCreatView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
@@ -20,6 +20,16 @@ class ProductsRetriveView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     lookup_field = 'id'
 
+# ---------------------------------- \Category ------------------------------------
+
+class CategoryListCreatView(generics.ListCreateAPIView):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
+class CategoryRetriveView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+    lookup_field = 'id'
 
 # ---------------------------------- \Products ------------------------------------
 
