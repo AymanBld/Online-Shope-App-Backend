@@ -7,6 +7,11 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'description', 'price', 'discount', 'image_url', 'category']
+
+class ProductWithCategorySerializer(serializers.ModelSerializer):
     is_favorite = serializers.SerializerMethodField()
     category = CategorySerializer()
     class Meta:

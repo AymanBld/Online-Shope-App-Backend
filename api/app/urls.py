@@ -2,9 +2,12 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
+    path('products/', ProductsListCreatView.as_view()),
+    path('products/<int:id>', ProductsRetriveView.as_view()),
+
     path('category/<int:category_id>/', list_products_from_category),
     path('deals/', list_deal_products),
-    path('products/', search_view),
+    # path('products/', search_view),
     path('favorite/', list_favorite_products),
     path('favorite/<int:product_id>/', add_delete_favorite_product),
 

@@ -9,26 +9,38 @@ from django.shortcuts import get_object_or_404
 from .models import *
 from .serializer import *
 
+# ---------------------------------- \Address ------------------------------------
+
+class ProductsListCreatView(generics.ListCreateAPIView):
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+
+class ProductsRetriveView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+    lookup_field = 'id'
+
+
 # ---------------------------------- \Products ------------------------------------
 
 @api_view(['GET'])
 def list_products_from_category(request, category_id):
     products = Product.objects.filter(category=category_id).order_by('favorited_by')
     
-    serializer = ProductSerializer(products, many=True, context={'request': request})
+    serializer = ProductWithCategorySerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(['GET'])
 def list_deal_products(request):
     products = Product.objects.order_by('-discount')
-    serializer = ProductSerializer(products, many=True, context={'request': request})
+    serializer = ProductWithCategorySerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(['GET'])
 def search_view(request):
     keyword = request.GET.get('keyword')
     products = Product.objects.filter(Q(name__icontains=keyword) | Q(description__icontains=keyword))
-    serializer = ProductSerializer(products, many=True, context={'request': request})
+    serializer = ProductWithCategorySerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
 # ---------------------------------- \Favorite ------------------------------------
@@ -37,7 +49,7 @@ def search_view(request):
 def list_favorite_products(request):
     user = request.user
     products_favorited = user.favorite_products.all()
-    serializer = ProductSerializer(products_favorited, many=True, context={'request': request})
+    serializer = ProductWithCategorySerializer(products_favorited, many=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(['POST', 'DELETE'])
