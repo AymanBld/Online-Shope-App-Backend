@@ -25,7 +25,7 @@ urlpatterns = [
     path('orders/', CreatOrderView.as_view()),
     path('orders/active/', ListActiveOrdersView.as_view()),
     path('orders/archive/', ListAllOrdersView.as_view()),
-    path('orders/<int:id>/', RetriveDeleteUpdateOrder.as_view()),
+    path('orders/<int:id>/', RetriveDeleteOrder.as_view()),
 
     path('address/', AddressListCreatView.as_view()),
     path('address/<int:id>/', AddressRetriveView.as_view()),

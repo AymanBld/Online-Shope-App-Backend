@@ -1,9 +1,8 @@
 from django.utils import timezone
 from django.db.models import Q
-from rest_framework import mixins, generics, status
+from rest_framework import mixins, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
 from .models import *
@@ -13,10 +12,12 @@ from .serializer import *
 
 class ProductsListCreatView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
+    permission_classes = []
     queryset = Product.objects.all()
 
 class ProductsRetriveView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer
+    permission_classes = []
     queryset = Product.objects.all()
     lookup_field = 'id'
 
@@ -24,10 +25,13 @@ class ProductsRetriveView(generics.RetrieveUpdateDestroyAPIView):
 
 class CategoryListCreatView(generics.ListCreateAPIView):
     serializer_class = CategorySerializer
+    permission_classes = []
+
     queryset = Category.objects.all()
 
 class CategoryRetriveView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CategorySerializer
+    permission_classes = []
     queryset = Category.objects.all()
     lookup_field = 'id'
 
@@ -78,6 +82,7 @@ def add_delete_favorite_product(request, product_id):
 
 class AddItemCartView(generics.GenericAPIView):
     serializer_class = CartInputSerializer
+    permission_classes = []
     def post(self, request, *arg, **kwarg):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -95,12 +100,14 @@ class AddItemCartView(generics.GenericAPIView):
 
 class ListCartView(generics.ListAPIView):
     serializer_class = CartSerializer
+    permission_classes = []
     def get_queryset(self):
         user = self.request.user
         return Cart.objects.filter(user=user)
 
 class UpdateRemoveItemCart(generics.DestroyAPIView, mixins.UpdateModelMixin):
     serializer_class = CartInputSerializer
+    permission_classes = []
     queryset = Cart.objects.all()
     lookup_field = 'id'
 
@@ -119,10 +126,12 @@ def check_coupon_view(request):
 
 class AddressListCreatView(generics.ListCreateAPIView):
     serializer_class = AdressSerializer
+    permission_classes = []
     queryset = Address.objects.all()
 
 class AddressRetriveView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AdressSerializer
+    permission_classes = []
     queryset = Address.objects.all()
     lookup_field = 'id'
 
@@ -130,6 +139,7 @@ class AddressRetriveView(generics.RetrieveUpdateDestroyAPIView):
 
 class CreatOrderView(generics.CreateAPIView):
     serializer_class = OrderSerializer      
+    permission_classes = []
     queryset = Order.objects.all()
 
     def post(self, request, *args, **kwargs):
@@ -142,13 +152,22 @@ class CreatOrderView(generics.CreateAPIView):
         
 class ListAllOrdersView(generics.ListAPIView):
     serializer_class = OrderSerializer
+    permission_classes = []
     queryset = Order.objects.all()
 
 class ListActiveOrdersView(generics.ListAPIView):
     serializer_class = OrderSerializer
+    permission_classes = []
     queryset = Order.objects.filter(status__lt=4)
 
-class RetriveDeleteUpdateOrder(generics.RetrieveUpdateDestroyAPIView):
+class RetriveDeleteOrder(generics.RetrieveDestroyAPIView):
     serializer_class = OrderSerializer
+    permission_classes = []
+    queryset = Order.objects.all()
+    lookup_field = 'id'
+
+class UpdateOrder(generics.UpdateAPIView): #!!!!!!!! just for admin to update status
+    serializer_class = OrderSerializer
+    permission_classes = []
     queryset = Order.objects.all()
     lookup_field = 'id'
