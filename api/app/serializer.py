@@ -49,7 +49,3 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AdressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Address
-        fields = '__all__'
