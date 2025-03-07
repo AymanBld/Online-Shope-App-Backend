@@ -1,55 +1,79 @@
-# Ignore Python compiled files
+# Django
+*.log
+*.pot
 *.pyc
-*.pyo
-*.pyd
 __pycache__/
-
-# Ignore virtual environment
-venv/
-env/
-
-# Ignore Django database files
+local_settings.py
 db.sqlite3
-*.sqlite3
-
-# Ignore media/uploads (user-uploaded files)
 media/
-images/
-
-# Ignore static files (if collected manually)
 staticfiles/
-static/
 
-# Ignore IDE/editor-specific files
+# Virtual Environment
+myenv/
+venv/
+.env/
+.envrc/
+.env.local
+.env.*.local
+
+# IDE/Editor
 .vscode/
 .idea/
 *.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
 
-# Ignore logs and temporary files
-*.log
-*.out
-*.pid
-*.bak
+# System Files
+.DS_Store
+Thumbs.db
 
-# Ignore environment variables/secrets
-.env
-*.env
-config/settings_local.py
-
-# Ignore migrations (if not tracking)
-migrations/
-!migrations/__init__.py
-
-# Ignore cache and build files
-__pycache__/
-*.egg-info/
-dist/
-build/
-
-# Ignore Node.js dependencies (if using npm/yarn)
+# Node.js (if applicable)
 node_modules/
+npm-debug.log*
 
-# Ignore coverage reports
-htmlcov/
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Database
+*.db
+*.sqlite3
+
+# Testing
 .coverage
-*.cover
+htmlcov/
+.pytest_cache/
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Backup files
+*.bak
+*.backup

@@ -55,7 +55,7 @@ class Order(models.Model):
     quantity = models.IntegerField()
     payment_method = models.CharField(max_length=100, choices=[('Cash', 'cash'), ('Credit', 'credit')])
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
-    status = models.IntegerField(max_length= 50, choices=STATUS_CHOICES, default=1)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=1)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
