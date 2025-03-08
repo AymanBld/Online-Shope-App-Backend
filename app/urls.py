@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import *
 
 urlpatterns = [
@@ -10,6 +10,9 @@ urlpatterns = [
     path('category/<int:id>', CategoryRetriveView.as_view()),
 
     # For users: ---------------------------------------------------------------------------------
+    path('auth/', include('dj_rest_auth.urls')),
+    path('auth/registration/', include('dj_rest_auth.registration.urls')),
+
     path('products/category/<int:category_id>/', list_products_by_category),
     path('products/deals/', list_deal_products),
     path('products/search/', search_products_view),
