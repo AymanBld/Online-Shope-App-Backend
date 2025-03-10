@@ -8,6 +8,12 @@ from django.shortcuts import get_object_or_404
 from .models import *
 from .serializer import *
 
+# ---------------------------------- \Auth ------------------------------------
+
+class Registration(generics.CreateAPIView):
+    serializer_class = UserSerializer
+    queryset = MyUser.objects.all()
+
 # ---------------------------------- \Products ------------------------------------
 
 class ProductsListCreatView(generics.ListCreateAPIView):

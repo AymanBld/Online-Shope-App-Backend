@@ -2,6 +2,9 @@ from django.urls import path, include
 from .views import *
 
 urlpatterns = [
+    # Authentication: ---------------------------------------------------------------------------------
+    path('auth/registration/', Registration.as_view()),
+    
     # For Admin: ---------------------------------------------------------------------------------
     path('products/', ProductsListCreatView.as_view()),
     path('products/<int:id>', ProductsRetriveView.as_view()),
@@ -10,9 +13,6 @@ urlpatterns = [
     path('category/<int:id>', CategoryRetriveView.as_view()),
 
     # For users: ---------------------------------------------------------------------------------
-    path('auth/', include('dj_rest_auth.urls')),
-    path('auth/registration/', include('dj_rest_auth.registration.urls')),
-
     path('products/category/<int:category_id>/', list_products_by_category),
     path('products/deals/', list_deal_products),
     path('products/search/', search_products_view),

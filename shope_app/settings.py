@@ -39,27 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # rest framework
     'rest_framework',
-    'rest_framework.authtoken',
-    # authentication
-    'dj_rest_auth',
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'dj_rest_auth.registration',
     # my apps
     'app',
 ]
-
-SITE_ID = 1
-
-ACCOUNT_EMAIL_VERIFICATION = "none"
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework.authentication.SessionAuthentication',
-    ),
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -69,8 +51,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'shope_app.urls'
