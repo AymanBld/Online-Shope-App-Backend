@@ -7,7 +7,7 @@ urlpatterns = [
     path('auth/login/', Login),
     path('auth/verify/', verify_otp),
     path('auth/resend-email/', resend_otp_code),
-    path('auth/password/forgot/', forgot_password),
+    path('auth/password/forget/', forgot_password),
     path('auth/password/reset/', rest_password),
     
     # For Admin: ---------------------------------------------------------------------------------
