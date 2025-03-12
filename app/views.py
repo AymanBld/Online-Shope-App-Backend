@@ -66,8 +66,32 @@ def forgot_password(request):
 
     # send email to user
     return Response({'message':'Email sent'})
+
+@api_view(['POST'])
+def verify_otp(request):
+    email = request.data.get('email')
+    username = request.data.get('username')
+
+    if not (email or username):
+        return Response({'error':'Email or Username field is required'})
+    if username:
+        user = MyUser.objects.filter(username=username).first()
+    else:
+        user = MyUser.objects.filter(email=email).first()
+    if not user:
+        return Response({'error':'User with this cridential not exit'})
+
+    his_otp = request.data.get('otp')
+    if not his_otp == user.otp or not user.otp_is_valid():
+        return Response({'error':'not verified'})
     
-    
+    user.is_active = 1
+    user.otp = None
+    user.otp_created = None
+    user.save()
+    return Response({'message':'user verified'})
+
+
 # ---------------------------------- \Products ------------------------------------
 
 class ProductsListCreatView(generics.ListCreateAPIView):
