@@ -34,35 +34,34 @@ def Login(request):
         user = MyUser.objects.filter(username=username, password=password).first()
     else:
         user = MyUser.objects.filter(email=email, password=password).first()
-    print(f'================={user}')
-    if user:
-        return Response({
-            'message':'Login succesfly',
-            'user':{
-                'id' : user.pk,
-                'username' : user.username,
-                'email' : user.email,
-                'phone' : user.phone,
-                'first_name' : user.first_name,
-                'last_name' : user.last_name
-            }
-        })
-    else:
+    if not user:
         return Response({'error':'Invalid credentials'},status=401)
-
+    
+    return Response({
+        'message':'Login succesfly',
+        'user':{
+            'id' : user.pk,
+            'username' : user.username,
+            'email' : user.email,
+            'phone' : user.phone,
+            'first_name' : user.first_name,
+            'last_name' : user.last_name
+        }
+    })
+    
 @api_view(['POST'])
 def forgot_password(request):
     email = request.data.get('email')
     username = request.data.get('username')
 
     if not (email or username):
-        return Response({'error':'Email or Username field is required'})
+        return Response({'error':'Email or Username field is required'}, status=400)
     if username:
         user = MyUser.objects.filter(username=username).first()
     else:
         user = MyUser.objects.filter(email=email).first()
     if not user:
-        return Response({'error':'User with this cridential not exit'})
+        return Response({'error':'Invalid credentials'},status=401)
 
     # send email to user
     return Response({'message':'Email sent'})
@@ -73,17 +72,17 @@ def verify_otp(request):
     username = request.data.get('username')
 
     if not (email or username):
-        return Response({'error':'Email or Username field is required'})
+        return Response({'error':'Email or Username field is required'}, status=400)
     if username:
         user = MyUser.objects.filter(username=username).first()
     else:
         user = MyUser.objects.filter(email=email).first()
     if not user:
-        return Response({'error':'User with this cridential not exit'})
+        return Response({'error':'Invalid credentials'},status=401)
 
     his_otp = request.data.get('otp')
     if not his_otp == user.otp or not user.otp_is_valid():
-        return Response({'error':'not verified'})
+        return Response({'error':'not verified'}, status=400)
     
     user.is_active = 1
     user.otp = None
@@ -97,18 +96,19 @@ def resend_otp_code(request):
     username = request.data.get('username')
 
     if not (email or username):
-        return Response({'error':'Email or Username field is required'})
+        return Response({'error':'Email or Username field is required'}, status=400)
     if username:
         user = MyUser.objects.filter(username=username).first()
     else:
         user = MyUser.objects.filter(email=email).first()
     if not user:
-        return Response({'error':'User with this cridential not exit'})
+        return Response({'error':'Invalid credentials'},status=401)
     
     user.generat_otp()
     user.save()
     # send another email
     return Response({'message':'email send'})
+
 
 # ---------------------------------- \Products ------------------------------------
 
