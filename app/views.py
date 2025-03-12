@@ -4,6 +4,7 @@ from rest_framework import mixins, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import authenticate
 
 from .models import *
 from .serializer import *
@@ -14,11 +15,38 @@ class Registration(generics.CreateAPIView):
     serializer_class = UserSerializer
     queryset = MyUser.objects.all()
 
+@api_view(['POST'])
+def Login(request):
+    email = request.data.get('email')
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    if not (password and (email or username)):
+        return Response({'error':'Email or Username And Password aer requaired'},status=400)
+    if username:
+        user = MyUser.objects.filter(username=username, password=password).first()
+    else:
+        user = MyUser.objects.filter(email=email, password=password).first()
+    print(f'================={user}')
+    if user:
+        return Response({
+            'message':'Login succesfly',
+            'user':{
+                'id' : user.pk,
+                'username' : user.username,
+                'email' : user.email,
+                'phone' : user.phone,
+                'first_name' : user.first_name,
+                'last_name' : user.last_name
+            }
+        })
+    else:
+        return Response({'error':'Invalid credentials'},status=401)
+
 # ---------------------------------- \Products ------------------------------------
 
 class ProductsListCreatView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
-
     quezryset = Product.objects.all()
 
 class ProductsRetriveView(generics.RetrieveUpdateDestroyAPIView):
@@ -44,7 +72,6 @@ class CategoryRetriveView(generics.RetrieveUpdateDestroyAPIView):
 # ---------------------------------- \Home ------------------------------------
 
 @api_view(['GET'])
-@permission_classes([])
 def list_products_by_category(request, category_id):
     products = Product.objects.filter(category=category_id)
     serializer = ProductWithCategorySerializer(products, many=True, context={'request': request})

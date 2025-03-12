@@ -4,6 +4,7 @@ from .views import *
 urlpatterns = [
     # Authentication: ---------------------------------------------------------------------------------
     path('auth/registration/', Registration.as_view()),
+    path('auth/login/', Login),
     
     # For Admin: ---------------------------------------------------------------------------------
     path('products/', ProductsListCreatView.as_view()),
