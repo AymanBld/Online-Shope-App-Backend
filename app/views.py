@@ -109,6 +109,24 @@ def resend_otp_code(request):
     # send another email
     return Response({'message':'email send'})
 
+@api_view(['POST'])
+def rest_password(request):
+    email = request.data.get('email')
+    username = request.data.get('username')
+
+    if not (email or username):
+        return Response({'error':'Email or Username field is required'}, status=400)
+    if username:
+        user = MyUser.objects.filter(username=username).first()
+    else:
+        user = MyUser.objects.filter(email=email).first()
+    if not user:
+        return Response({'error':'Invalid credentials'},status=401)
+    
+    new_password = request.data.get('password')
+    user.password = new_password
+    user.save()
+    return Response({'message':'password reset succesfly'})
 
 # ---------------------------------- \Products ------------------------------------
 
