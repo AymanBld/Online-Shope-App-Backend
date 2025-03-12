@@ -1,10 +1,25 @@
+import random
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class MyUser(AbstractUser):
+
     phone = models.IntegerField()
     email = models.EmailField()
+    otp = models.CharField(max_length=6, blank=True, null=True)
+    otp_created = models.DateTimeField(blank=True, null=True)
 
+    def generat_otp(self):
+        from django.utils.timezone import now
+        self.otp = str(random.randint(10000, 99999))
+        self.otp_created = now()
+        self.save()
+
+    def otp_is_valid(self):
+        from datetime import timedelta
+        from django.utils.timezone import now
+        return now() - self.otp_created < timedelta(minutes=5)
+    
     def __str__(self):
         return self.username
 

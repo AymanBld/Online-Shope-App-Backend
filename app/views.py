@@ -15,6 +15,15 @@ class Registration(generics.CreateAPIView):
     serializer_class = UserSerializer
     queryset = MyUser.objects.all()
 
+    def create(self, request, *args, **kwargs):
+        serializers = UserSerializer(data=request.data)
+        serializers.is_valid(raise_exception=True)
+        user = serializers.save()
+        user.generat_otp()
+        # send email
+        return Response({'message':'Registartion Succefly'},status=201)
+
+
 @api_view(['POST'])
 def Login(request):
     email = request.data.get('email')
