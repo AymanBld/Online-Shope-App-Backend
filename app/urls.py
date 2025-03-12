@@ -5,6 +5,7 @@ urlpatterns = [
     # Authentication: ---------------------------------------------------------------------------------
     path('auth/registration/', Registration.as_view()),
     path('auth/login/', Login),
+    path('auth/password/forgot/', forgot_password),
     
     # For Admin: ---------------------------------------------------------------------------------
     path('products/', ProductsListCreatView.as_view()),

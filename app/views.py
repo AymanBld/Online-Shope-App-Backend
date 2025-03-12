@@ -2,9 +2,8 @@ from django.utils import timezone
 from django.db.models import Q
 from rest_framework import mixins, generics
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import authenticate
 
 from .models import *
 from .serializer import *
@@ -22,7 +21,6 @@ class Registration(generics.CreateAPIView):
         user.generat_otp()
         # send email
         return Response({'message':'Registartion Succefly'},status=201)
-
 
 @api_view(['POST'])
 def Login(request):
@@ -52,6 +50,24 @@ def Login(request):
     else:
         return Response({'error':'Invalid credentials'},status=401)
 
+@api_view(['POST'])
+def forgot_password(request):
+    email = request.data.get('email')
+    username = request.data.get('username')
+
+    if not (email or username):
+        return Response({'error':'Email or Username field is required'})
+    if username:
+        user = MyUser.objects.filter(username=username).first()
+    else:
+        user = MyUser.objects.filter(email=email).first()
+    if not user:
+        return Response({'error':'User with this cridential not exit'})
+
+    # send email to user
+    return Response({'message':'Email sent'})
+    
+    
 # ---------------------------------- \Products ------------------------------------
 
 class ProductsListCreatView(generics.ListCreateAPIView):
