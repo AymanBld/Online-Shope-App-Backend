@@ -91,6 +91,24 @@ def verify_otp(request):
     user.save()
     return Response({'message':'user verified'})
 
+@api_view(['POST'])
+def resend_otp_code(request):
+    email = request.data.get('email')
+    username = request.data.get('username')
+
+    if not (email or username):
+        return Response({'error':'Email or Username field is required'})
+    if username:
+        user = MyUser.objects.filter(username=username).first()
+    else:
+        user = MyUser.objects.filter(email=email).first()
+    if not user:
+        return Response({'error':'User with this cridential not exit'})
+    
+    user.generat_otp()
+    user.save()
+    # send another email
+    return Response({'message':'email send'})
 
 # ---------------------------------- \Products ------------------------------------
 
