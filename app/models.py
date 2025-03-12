@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 class MyUser(AbstractUser):
 
-    phone = models.IntegerField()
+    phone = models.CharField(max_length=13)
     email = models.EmailField()
     otp = models.CharField(max_length=6, blank=True, null=True)
     otp_created = models.DateTimeField(blank=True, null=True)
