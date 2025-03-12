@@ -38,6 +38,7 @@ class Product(models.Model):
     image_url = models.ImageField(upload_to='images/products/', blank=True, default='/images/default.jpg')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     favorited_by = models.ManyToManyField(MyUser, related_name='favorite_products', blank=True)
+    dicountedPrice = models.IntegerField(blank=True, default=price - (price * (discount/100)))
 
     def __str__(self):
         return self.name
