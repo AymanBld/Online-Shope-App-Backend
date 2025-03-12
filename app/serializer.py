@@ -21,7 +21,7 @@ class ProductWithCategorySerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'image_url', 'price', 'discount', 'is_favorite', 'category']  
+        fields = ['id', 'name', 'description', 'image_url', 'price', 'discount', 'is_favorite', 'dicountedPrice', 'category']  
 
     def get_is_favorite(self, obj):
         user = self.context.get('request').user
