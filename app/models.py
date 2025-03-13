@@ -33,16 +33,11 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=1000, blank=True, default='No description available')
-    price = models.FloatField()
-    discount = models.IntegerField(blank=True, default=0)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.DecimalField(max_digits=5, decimal_places=2, blank=True, default=0)
     image_url = models.ImageField(upload_to='images/products/', blank=True, default='/images/default.jpg')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     favorited_by = models.ManyToManyField(MyUser, related_name='favorite_products', blank=True)
-    dicountedPrice = models.IntegerField(blank=True, default=0)
-
-    def save(self, force_insert = ..., force_update = ..., using = ..., update_fields = ...):
-        self.dicountedPrice = self.price - (self.price * (self.discount/100))
-        return super().save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
         return self.name

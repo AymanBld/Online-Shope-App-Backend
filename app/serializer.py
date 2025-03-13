@@ -12,22 +12,24 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = ['id', 'name', 'description', 'price', 'discount', 'image_url', 'category']
-
-class ProductWithCategorySerializer(serializers.ModelSerializer):
     is_favorite = serializers.SerializerMethodField()
+    dicountedPrice = serializers.SerializerMethodField()
     category = CategorySerializer()
+
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'image_url', 'price', 'discount', 'is_favorite', 'dicountedPrice', 'category']  
+        fields = ['id', 'name', 'description', 'price', 'discount', 'image_url', 'dicountedPrice','is_favorite', 'category']
 
     def get_is_favorite(self, obj):
         user = self.context.get('request').user
         if user :
             return user in obj.favorited_by.all()
         return False
+    
+    def get_dicountedPrice(self, obj):
+        return obj.price - (obj.price * (obj.discount / 100))
+
+   
     
 
 class CartSerializer(serializers.ModelSerializer):

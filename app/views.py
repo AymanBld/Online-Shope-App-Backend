@@ -131,7 +131,7 @@ def rest_password(request):
 
 class ProductsListCreatView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
-    quezryset = Product.objects.all()
+    queryset = Product.objects.all()
 
 class ProductsRetriveView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer
@@ -158,20 +158,20 @@ class CategoryRetriveView(generics.RetrieveUpdateDestroyAPIView):
 @api_view(['GET'])
 def list_products_by_category(request, category_id):
     products = Product.objects.filter(category=category_id)
-    serializer = ProductWithCategorySerializer(products, many=True, context={'request': request})
+    serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(['GET'])
 def list_deal_products(request):
     products = Product.objects.order_by('-discount')
-    serializer = ProductWithCategorySerializer(products, many=True, context={'request': request})
+    serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(['GET'])
 def search_products_view(request):
     keyword = request.GET.get('keyword')
     products = Product.objects.filter(Q(name__icontains=keyword) | Q(description__icontains=keyword))
-    serializer = ProductWithCategorySerializer(products, many=True, context={'request': request})
+    serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
 
 # ---------------------------------- \Favorite ------------------------------------
@@ -180,7 +180,7 @@ def search_products_view(request):
 def list_favorite_products(request):
     user = request.user
     products_favorited = user.favorite_products.all()
-    serializer = ProductWithCategorySerializer(products_favorited, many=True, context={'request': request})
+    serializer = ProductSerializer(products_favorited, many=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(['POST', 'DELETE'])
