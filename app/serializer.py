@@ -13,12 +13,12 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     is_favorite = serializers.SerializerMethodField()
-    dicountedPrice = serializers.SerializerMethodField()
+    discountedPrice = serializers.SerializerMethodField()
     category = CategorySerializer()
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'price', 'discount', 'image_url', 'dicountedPrice','is_favorite', 'category']
+        fields = ['id', 'name', 'description', 'price', 'discount', 'image_url', 'discountedPrice','is_favorite', 'category']
 
     def get_is_favorite(self, obj):
         user = self.context.get('user')
@@ -26,7 +26,7 @@ class ProductSerializer(serializers.ModelSerializer):
             return user in obj.favorited_by.all()
         return False
     
-    def get_dicountedPrice(self, obj):
+    def get_discountedPrice(self, obj):
         new_price = obj.price - (obj.price * (obj.discount / 100))
         return round(new_price,2)
 
