@@ -93,7 +93,7 @@ class Cart(models.Model):
 
 class Coupon(models.Model):
     name = models.CharField(max_length=100)
-    discount = models.FloatField()
+    discount = models.IntegerField()
     quantity = models.IntegerField()
     dateEx = models.DateField()
 

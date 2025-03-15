@@ -25,7 +25,7 @@ class ProductSerializer(serializers.ModelSerializer):
         if user :
             return user in obj.favorited_by.all()
         return False
-    
+        
     def get_discountedPrice(self, obj):
         new_price = obj.price - (obj.price * (obj.discount / 100))
         return round(new_price,2)

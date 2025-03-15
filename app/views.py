@@ -232,10 +232,17 @@ class UpdateRemoveItemCart(generics.DestroyAPIView, generics.UpdateAPIView ):
     queryset = Cart.objects.all()
     lookup_field = 'id'
 
-@api_view(['GET'])
+@api_view(['POST'])
 def check_coupon_view(request):
-    name_input = request.GET.get('coupon')
-    coupon = get_object_or_404(Coupon, name=name_input, quantity__gt=0, dateEx__gte=timezone.now().date())
+    name_input = request.data.get('coupon')
+    
+    if not name_input:
+        return Response({'error':'coupon field is required'},status=401)
+    coupon = Coupon.objects.filter(name=name_input, quantity__gt=0, dateEx__gte=timezone.now().date()).first()
+    
+    if not coupon:
+        return Response({'error':'invalid coupon code'},status=401)
+    
     return Response({'discount': coupon.discount})
 
 # ---------------------------------- \Address ------------------------------------
