@@ -61,7 +61,8 @@ def forgot_password(request):
         user = MyUser.objects.filter(email=email).first()
     if not user:
         return Response({'error':'Invalid credentials'},status=401)
-
+    
+    user.generat_otp()
     # send email to user
     return Response({'message':'Email sent'})
 
@@ -158,35 +159,38 @@ class CategoryRetriveView(generics.RetrieveUpdateDestroyAPIView):
 @api_view(['GET'])
 def list_products_by_category(request, category_id):
     products = Product.objects.filter(category=category_id)
-    serializer = ProductSerializer(products, many=True, context={'request': request})
+    user = MyUser.objects.filter(id=request.headers.get('user')).first()
+    serializer = ProductSerializer(products, many=True, context={'user': user})
     return Response(serializer.data)
 
 @api_view(['GET'])
 def list_deal_products(request):
     products = Product.objects.order_by('-discount')
-    serializer = ProductSerializer(products, many=True, context={'request': request})
+    user = MyUser.objects.filter(id=request.headers.get('user')).first()
+    serializer = ProductSerializer(products, many=True, context={'user':user})
     return Response(serializer.data)
 
 @api_view(['GET'])
 def search_products_view(request):
-    keyword = request.GET.get('keyword')
+    keyword = request.GET.get('product-name')
+    user = MyUser.objects.filter(id=request.headers.get('user')).first()
     products = Product.objects.filter(Q(name__icontains=keyword) | Q(description__icontains=keyword))
-    serializer = ProductSerializer(products, many=True, context={'request': request})
+    serializer = ProductSerializer(products, many=True, context={'user':user})
     return Response(serializer.data)
 
 # ---------------------------------- \Favorite ------------------------------------
 
 @api_view(['GET'])
 def list_favorite_products(request):
-    user = request.user
+    user = MyUser.objects.filter(id=request.headers.get('user')).first()
     products_favorited = user.favorite_products.all()
-    serializer = ProductSerializer(products_favorited, many=True, context={'request': request})
+    serializer = ProductSerializer(products_favorited, many=True, context={'user': user})
     return Response(serializer.data)
 
 @api_view(['POST', 'DELETE'])
 def add_delete_favorite_product(request, product_id):
+    user = MyUser.objects.filter(id=request.headers.get('user')).first()
     product = Product.objects.get(id=product_id)
-    user = request.user
 
     if request.method == 'POST':
         product.favorited_by.add(user)
@@ -206,7 +210,8 @@ class AddItemCartView(generics.GenericAPIView):
 
         product = serializer.validated_data['product']
         quantity = serializer.validated_data['quantity']
-        user = request.user
+        user = MyUser.objects.filter(id=request.headers.get('user')).first()
+
 
         cart_item, created = Cart.objects.get_or_create(user=user, product=product, order=None, defaults={'quantity': quantity})
         if not created:
@@ -219,12 +224,11 @@ class ListCartView(generics.ListAPIView):
     serializer_class = CartSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        return Cart.objects.filter(user=user)
+        user = MyUser.objects.filter(id=self.request.headers.get('user')).first()
+        return Cart.objects.filter(user=user, order__isnull=True)
 
 class UpdateRemoveItemCart(generics.DestroyAPIView, mixins.UpdateModelMixin):
     serializer_class = CartInputSerializer
-
     queryset = Cart.objects.all()
     lookup_field = 'id'
 
