@@ -227,15 +227,10 @@ class ListCartView(generics.ListAPIView):
         user = MyUser.objects.filter(id=self.request.headers.get('user')).first()
         return Cart.objects.filter(user=user, order__isnull=True)
 
-class UpdateRemoveItemCart(generics.DestroyAPIView, mixins.UpdateModelMixin):
+class UpdateRemoveItemCart(generics.DestroyAPIView, generics.UpdateAPIView ):
     serializer_class = CartInputSerializer
     queryset = Cart.objects.all()
     lookup_field = 'id'
-
-    def patch(self, request, *args, **kwargs):
-        if request.data.get('quantity') > 0:
-            return self.partial_update(request, *args, **kwargs)
-        return self.destroy(request, *args, **kwargs)
 
 @api_view(['GET'])
 def check_coupon_view(request):
