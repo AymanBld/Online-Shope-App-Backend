@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django.db.models import Q
-from rest_framework import mixins, generics
+from rest_framework import mixins, generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
@@ -243,54 +243,65 @@ def check_coupon_view(request):
     if not coupon:
         return Response({'error':'invalid coupon code'},status=401)
     
-    return Response({'discount': coupon.discount})
+    return Response({'id':coupon.pk, 'discount': coupon.discount, 'name':coupon.name})
 
 # ---------------------------------- \Address ------------------------------------
 
 class AddressListCreatView(generics.ListCreateAPIView):
     serializer_class = AdressSerializer
-
-    queryset = Address.objects.all()
+    def get_queryset(self):
+        user = MyUser.objects.filter(id=self.request.headers.get('user')).first()
+        return Address.objects.filter(user=user)
 
 class AddressRetriveView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AdressSerializer
-
     queryset = Address.objects.all()
     lookup_field = 'id'
 
 # ---------------------------------- \Orders ------------------------------------
 
-class CreatOrderView(generics.CreateAPIView):
+class CheckOut(generics.CreateAPIView):
     serializer_class = OrderSerializer      
-
     queryset = Order.objects.all()
 
     def post(self, request, *args, **kwargs):
         creat_response=self.create(request, *args, **kwargs)
-        order_id = creat_response.data['id']
+        if creat_response.status_code != status.HTTP_201_CREATED:
+            return creat_response
 
-        user = request.user
+        coupon_id = creat_response.data.get('coupon')
+        if coupon_id:
+            coupon = Coupon.objects.filter(id=coupon_id).first()
+            coupon.quantity -= 1
+            coupon.save()
+            
+
+        order_id = creat_response.data['id']
+        user = MyUser.objects.filter(id=self.request.headers.get('user')).first()
         Cart.objects.filter(order__isnull=True, user=user).update(order=order_id)
+        
         return creat_response
         
 class ListAllOrdersView(generics.ListAPIView):
     serializer_class = OrderSerializer
 
-    queryset = Order.objects.all()
+    def get_queryset(self):
+        user = MyUser.objects.filter(id=self.request.headers.get('user')).first()
+        return Order.objects.filter(user=user)
 
 class ListActiveOrdersView(generics.ListAPIView):
     serializer_class = OrderSerializer
 
-    queryset = Order.objects.filter(status__lt=4)
+    def get_queryset(self):
+        user = MyUser.objects.filter(id=self.request.headers.get('user')).first()
+        return Order.objects.filter(user=user)
 
 class RetriveDeleteOrder(generics.RetrieveDestroyAPIView):
     serializer_class = OrderSerializer
-
     queryset = Order.objects.all()
     lookup_field = 'id'
 
-class UpdateOrder(generics.UpdateAPIView): #!!!!!!!! just for admin to update status
+class UpdateOrder(generics.UpdateAPIView): #!!!!!!!! just for admin to update status    
     serializer_class = OrderSerializer
-
     queryset = Order.objects.all()
     lookup_field = 'id'

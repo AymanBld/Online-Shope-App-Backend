@@ -62,16 +62,27 @@ class Address(models.Model):
 
     def __str__(self):
         return f'{self.name} of {self.user.username}'
+
+class Coupon(models.Model):
+    name = models.CharField(max_length=100)
+    discount = models.IntegerField()
+    quantity = models.IntegerField()
+    dateEx = models.DateField()
+
+    def __str__(self):
+        return self.name
     
 class Order(models.Model):
     STATUS_CHOICES= [(1, 'Pending'), (2, 'Accepted'), (3, 'Processing'), (4, 'Delivered'), (5, 'Canceled')]
+    
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     delivery = models.ForeignKey(Delevry, on_delete=models.CASCADE, blank=True, null=True)
-    total_price = models.FloatField()
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField()
-    payment_method = models.CharField(max_length=100, choices=[('Cash', 'cash'), ('Credit', 'credit')])
+    payment_method = models.CharField(max_length=100, choices=[(1, 'cash'), (2, 'credit')])
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     status = models.IntegerField(choices=STATUS_CHOICES, default=1)
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -90,14 +101,5 @@ class Cart(models.Model):
         if self.order:
             return f'{self.product.name}, of: {self.user.username}, inOrder: {self.order.date.date()}'
         return f'{self.product.name}, of: {self.user.username}'
-
-class Coupon(models.Model):
-    name = models.CharField(max_length=100)
-    discount = models.IntegerField()
-    quantity = models.IntegerField()
-    dateEx = models.DateField()
-
-    def __str__(self):
-        return self.name
 
 
