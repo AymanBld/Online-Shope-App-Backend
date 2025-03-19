@@ -1,6 +1,7 @@
 import random
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.mail import send_mail
 
 class MyUser(AbstractUser):
 
@@ -14,6 +15,13 @@ class MyUser(AbstractUser):
         self.otp = str(random.randint(10000, 99999))
         self.otp_created = now()
         self.save()
+        send_mail(
+            f'Verification Code',
+            f'Hello, Your verification code is {self.otp} , please use it to verify your email it will be expired in 5 minutes',
+            None,
+            [self.email],
+            fail_silently=True
+        )
 
     def otp_is_valid(self):
         from datetime import timedelta

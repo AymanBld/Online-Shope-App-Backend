@@ -4,9 +4,11 @@ from rest_framework import mixins, generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
 
 from .models import *
-from .serializer import *
+from .serializer import *    
+    
 
 # ---------------------------------- \Auth ------------------------------------
 
@@ -19,7 +21,16 @@ class Registration(generics.CreateAPIView):
         serializers.is_valid(raise_exception=True)
         user = serializers.save()
         user.generat_otp()
-        # send email
+        
+        send_mail(
+            f'Welcom {serializers.validated_data['username']}',
+            f'''Welcom {serializers.validated_data['username']} to AymanShope 
+            we are so excited you\'re joining us on this epic journey throught the wonderful world of shopping''',
+            None,
+            [serializers.validated_data['email']],
+            fail_silently=True
+        )
+        
         return Response({'message':'Registartion Succefly'},status=201)
 
 @api_view(['POST'])
@@ -63,7 +74,7 @@ def forgot_password(request):
         return Response({'error':'Invalid credentials'},status=401)
     
     user.generat_otp()
-    # send email to user
+
     return Response({'message':'Email sent'})
 
 @api_view(['POST'])
@@ -106,7 +117,6 @@ def resend_otp_code(request):
     
     user.generat_otp()
     user.save()
-    # send another email
     return Response({'message':'email send'})
 
 @api_view(['POST'])
@@ -301,7 +311,9 @@ class RetriveDeleteOrder(generics.RetrieveDestroyAPIView):
     queryset = Order.objects.all()
     lookup_field = 'id'
 
-class UpdateOrder(generics.UpdateAPIView): #!!!!!!!! just for admin to update status    
+class UpdateOrder(generics.UpdateAPIView): #!!!!!!!! just for admin to update status        
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
     lookup_field = 'id'
+
+
