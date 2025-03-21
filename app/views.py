@@ -30,7 +30,6 @@ class Registration(generics.CreateAPIView):
             [serializers.validated_data['email']],
             fail_silently=True
         )
-        
         return Response({'message':'Registartion Succefly'},status=201)
 
 @api_view(['POST'])
